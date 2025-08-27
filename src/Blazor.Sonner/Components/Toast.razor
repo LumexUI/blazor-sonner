@@ -1,5 +1,39 @@
 ﻿@namespace Blazor.Sonner
+@inject DomInterop DomInterop
+
+<li tabindex="0"
+    data-sonner-toast
+    data-styled="true"
+    data-mounted="@_isMounted.ToAttr()">
+    <div data-content>
+        <div data-title>@Model.Title</div>
+
+        @if( !string.IsNullOrWhiteSpace( Model.Description ) )
+        {
+            <div data-description>@Model.Description</div>
+        }
+    </div>
+</li>
 
 @code {
+    [Parameter] public ToastModel Model { get; set; } = default!;
 
+    private bool _isMounted;
+
+    protected override async Task OnAfterRenderAsync( bool firstRender )
+    {
+        if( firstRender )
+        {
+            // Trigger enter animation without using CSS animation
+            await SetMountedAsync( true );
+        }
+    }
+
+    private async ValueTask SetMountedAsync( bool value )
+    {
+        await DomInterop.RequestAnimationFrameAsync();
+
+        _isMounted = value;
+        StateHasChanged();
+    }
 }

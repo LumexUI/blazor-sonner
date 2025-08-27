@@ -1,5 +1,44 @@
 ﻿@namespace Blazor.Sonner
+@implements IDisposable
+@inject ToastService ToastService
+
+<CascadingValue TValue="Toaster" Value="@this" IsFixed="@true">
+    <section tabindex="-1"
+             aria-label="Notifications"
+             aria-live="polite"
+             aria-relevant="additions text"
+             aria-atomic="false">
+        <ol style="
+                --gap: @($"{Constants.Gap}px");
+                --width: @($"{Constants.ToastWidth}px");
+            " 
+            tabindex="-1" 
+            data-sonner-toaster>
+            @for( var index = 0; index < Toasts.Count; index++ )
+            {
+                var toast = Toasts[index];
+                <Toast @key="@toast.Id" Model="@toast" />
+            }
+        </ol>
+    </section>
+</CascadingValue>
 
 @code {
+    internal List<ToastModel> Toasts { get; } = [];
 
+    protected override void OnInitialized()
+    {
+        ToastService.OnShow += ShowToast;
+    }
+
+    private void ShowToast( object? sender, ToastShowEventArgs args )
+    {
+        Toasts.Insert( 0, args.Toast );
+        StateHasChanged();
+    }
+
+    void IDisposable.Dispose()
+    {
+        ToastService.OnShow -= ShowToast;
+    }
 }
