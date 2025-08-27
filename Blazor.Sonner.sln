@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Sonner.Docs", "docs\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Sonner.Docs.Client", "docs\Blazor.Sonner.Docs.Client\Blazor.Sonner.Docs.Client.csproj", "{96F558CD-764B-4994-9CC5-8219E41659B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Sonner", "Blazor.Sonner\Blazor.Sonner.csproj", "{8E1BAD3E-12B6-4218-885B-528962CB364C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Sonner", "src\Blazor.Sonner\Blazor.Sonner.csproj", "{8E1BAD3E-12B6-4218-885B-528962CB364C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
