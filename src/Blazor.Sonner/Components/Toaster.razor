@@ -8,24 +8,55 @@
              aria-live="polite"
              aria-relevant="additions text"
              aria-atomic="false">
-        <ol style="--gap: @($"{Constants.Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset(Offset, MobileOffset)" 
-            tabindex="-1" 
-            data-sonner-toaster>
-            @for( var index = 0; index < Toasts.Count; index++ )
+        @if( FilteredToasts?.Count > 0 )
+        {
+            for( var posIndex = 0; posIndex < PossiblePositions?.Count; posIndex++ )
             {
-                var toast = Toasts[index];
-                <Toast @key="@toast.Id" Model="@toast" />
+                var position = PossiblePositions[posIndex];
+                var (y, x) = Utils.MapPosition( position );
+
+                <ol @key="@position"
+                    style="--gap: @($"{Constants.Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset( Offset, MobileOffset )"
+                    tabindex="-1"
+                    data-sonner-toaster
+                    data-y-position="@y"
+                    data-x-position="@x">
+                    @for( var index = 0; index < FilteredToasts.Count; index++ )
+                    {
+                        var toast = FilteredToasts[index];
+
+                        if( (!toast.Position.HasValue && posIndex == 0) || toast.Position == position )
+                        {
+                            <Toast @key="@toast.Id"
+                                   Model="@toast"
+                                   Position="@position" />
+                        }
+                    }
+                </ol>
             }
-        </ol>
+        }
     </section>
 </CascadingValue>
 
 @code {
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public Position Position { get; set; } = Position.BottomRight;
     [Parameter] public Offset? Offset { get; set; }
     [Parameter] public Offset? MobileOffset { get; set; }
-    [Parameter] public ToastOptions? ToastOptions { get; set; }
 
     internal List<ToastModel> Toasts { get; } = [];
+
+    private List<ToastModel> FilteredToasts => 
+        !string.IsNullOrWhiteSpace( Id )
+            ? Toasts.Where( t => t.ToasterId == Id ).ToList()
+            : Toasts.Where( t => string.IsNullOrWhiteSpace( t.ToasterId ) ).ToList();
+
+    private List<Position> PossiblePositions => FilteredToasts
+        .Where( t => t.Position.HasValue )
+        .Select( t => t.Position!.Value )
+        .Prepend( Position )
+        .Distinct()
+        .ToList();
 
     protected override void OnInitialized()
     {

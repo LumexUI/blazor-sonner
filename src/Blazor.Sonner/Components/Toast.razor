@@ -4,7 +4,9 @@
 <li tabindex="0"
     data-sonner-toast
     data-styled="true"
-    data-mounted="@_isMounted.ToAttr()">
+    data-mounted="@_isMounted.ToAttr()"
+    data-y-position="@_position.Y"
+    data-x-position="@_position.X">
     <div data-content>
         <div data-title>@Model.Title</div>
 
@@ -17,8 +19,15 @@
 
 @code {
     [Parameter] public ToastModel Model { get; set; } = default!;
+    [Parameter] public Position Position { get; set; } = Position.BottomRight;
 
     private bool _isMounted;
+    private (string Y, string X) _position;
+
+    protected override void OnParametersSet()
+    {
+        _position = Utils.MapPosition( Position );
+    }
 
     protected override async Task OnAfterRenderAsync( bool firstRender )
     {

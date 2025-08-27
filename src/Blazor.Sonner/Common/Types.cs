@@ -8,8 +8,10 @@ public sealed record ToastOptions
 public sealed record ToastModel
 {
 	public Guid Id { get; init; }
+	public string? ToasterId { get; set; }
 	public string? Title { get; set; }
 	public string? Description { get; set; }
+	public Position? Position { get; set; }
 }
 
 public readonly struct Offset( float top, float left, float bottom, float right )
