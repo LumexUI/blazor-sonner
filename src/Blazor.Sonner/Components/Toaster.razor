@@ -16,9 +16,11 @@
                 var (y, x) = Utils.MapPosition( position );
 
                 <ol @key="@position"
-                    style="--gap: @($"{Constants.Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset( Offset, MobileOffset )"
+                    style="--gap: @($"{Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset( Offset, MobileOffset )
+                                   --front-toast-height: @FrontToastHeight;"
                     tabindex="-1"
                     data-sonner-toaster
+                    data-sonner-theme="light"
                     data-y-position="@y"
                     data-x-position="@x">
                     @for( var index = 0; index < FilteredToasts.Count; index++ )
@@ -28,6 +30,7 @@
                         if( (!toast.Position.HasValue && posIndex == 0) || toast.Position == position )
                         {
                             <Toast @key="@toast.Id"
+                                   Index="@index"
                                    Model="@toast"
                                    Position="@position" />
                         }
@@ -43,13 +46,13 @@
     [Parameter] public Position Position { get; set; } = Position.BottomRight;
     [Parameter] public Offset? Offset { get; set; }
     [Parameter] public Offset? MobileOffset { get; set; }
+    [Parameter] public int VisibleToasts { get; set; } = Constants.VisibleToastsAmount;
+    [Parameter] public int Gap { get; set; } = Constants.Gap;
 
-    internal List<ToastModel> Toasts { get; } = [];
-
-    private List<ToastModel> FilteredToasts => 
+    internal List<ToastModel> FilteredToasts =>
         !string.IsNullOrWhiteSpace( Id )
-            ? Toasts.Where( t => t.ToasterId == Id ).ToList()
-            : Toasts.Where( t => string.IsNullOrWhiteSpace( t.ToasterId ) ).ToList();
+            ? _toasts.Where( t => t.ToasterId == Id ).ToList()
+            : _toasts.Where( t => string.IsNullOrWhiteSpace( t.ToasterId ) ).ToList();
 
     private List<Position> PossiblePositions => FilteredToasts
         .Where( t => t.Position.HasValue )
@@ -58,14 +61,22 @@
         .Distinct()
         .ToList();
 
+    private string FrontToastHeight => FilteredToasts.Count > 1
+        ? $"{FilteredToasts[1].Height.Value.ToString( CultureInfo.InvariantCulture )}px"
+        : "0px";
+
+    private readonly List<ToastModel> _toasts = [];
+
     protected override void OnInitialized()
     {
         ToastService.OnShow += ShowToast;
     }
 
+    internal void Render() => StateHasChanged();
+
     private void ShowToast( object? sender, ToastShowEventArgs args )
     {
-        Toasts.Insert( 0, args.Toast );
+        _toasts.Insert( 0, args.Toast );
         StateHasChanged();
     }
 

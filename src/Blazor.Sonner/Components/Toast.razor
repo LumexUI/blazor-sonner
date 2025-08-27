@@ -1,10 +1,20 @@
 ﻿@namespace Blazor.Sonner
 @inject DomInterop DomInterop
 
-<li tabindex="0"
+<li @ref="@_toastRef"
+    style="
+--index: @Index;
+--toasts-before: @Index;
+--z-index: @(Toasts.Count - Index);
+--initial-height: @($"{_initialHeight.ToString( CultureInfo.InvariantCulture )}px");
+"
+    tabindex="0"
     data-sonner-toast
     data-styled="true"
     data-mounted="@_isMounted.ToAttr()"
+    data-visible="@_isVisible.ToAttr()"
+    data-expanded="false"
+    data-front="@_isFront.ToAttr()"
     data-y-position="@_position.Y"
     data-x-position="@_position.X">
     <div data-content>
@@ -18,15 +28,30 @@
 </li>
 
 @code {
+    [Parameter] public int Index { get; set; }
     [Parameter] public ToastModel Model { get; set; } = default!;
     [Parameter] public Position Position { get; set; } = Position.BottomRight;
 
+    [CascadingParameter] private Toaster Toaster { get; set; } = default!;
+
+    private List<ToastModel> Toasts => Toaster.FilteredToasts;
+
     private bool _isMounted;
+    private bool _isFront;
+    private bool _isVisible;
+
+    private double _initialHeight;
+
     private (string Y, string X) _position;
+
+    private ElementReference _toastRef;
 
     protected override void OnParametersSet()
     {
         _position = Utils.MapPosition( Position );
+
+        _isFront = Index == 0;
+        _isVisible = Index + 1 <= Toaster.VisibleToasts;
     }
 
     protected override async Task OnAfterRenderAsync( bool firstRender )
@@ -35,6 +60,7 @@
         {
             // Trigger enter animation without using CSS animation
             await SetMountedAsync( true );
+            await SetHeight();
         }
     }
 
@@ -44,5 +70,14 @@
 
         _isMounted = value;
         StateHasChanged();
+    }
+
+    private async Task SetHeight()
+    {
+        var height = (await DomInterop.GetBoundingClientRect( _toastRef )).Height;
+        _initialHeight = height;
+
+        Model.Height = new Height( Model.Id, height );
+        Toaster.Render();
     }
 }

@@ -1,4 +1,7 @@
-﻿using Microsoft.JSInterop;
+﻿using Blazor.Sonner.Common;
+
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Blazor.Sonner.Services;
 
@@ -18,5 +21,11 @@ internal sealed class DomInterop
 	{
 		var module = await _moduleTask.Value;
 		await module.InvokeVoidAsync( $"{JavaScriptPrefix}.nextFrame" );
+	}
+
+	public async ValueTask<BoundingClientRect> GetBoundingClientRect( ElementReference element )
+	{
+		var module = await _moduleTask.Value;
+		return await module.InvokeAsync<BoundingClientRect>( $"{JavaScriptPrefix}.getBoundingClientRect", element );
 	}
 }

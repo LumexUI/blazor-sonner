@@ -12,6 +12,7 @@ public sealed record ToastModel
 	public string? Title { get; set; }
 	public string? Description { get; set; }
 	public Position? Position { get; set; }
+	public Height Height { get; set; }
 }
 
 public readonly struct Offset( float top, float left, float bottom, float right )
@@ -28,6 +29,12 @@ public readonly struct Offset( float top, float left, float bottom, float right 
 	public Offset( float x, float y ) : this( y, x, y, x )
 	{
 	}
+}
+
+public readonly struct Height( Guid toastId, double value )
+{
+	public readonly Guid ToastId = toastId;
+	public readonly double Value = value;
 }
 
 public enum Position
@@ -53,4 +60,16 @@ internal sealed class ToastShowEventArgs : EventArgs
 	{
 		Toast = toast;
 	}
+}
+
+internal sealed record BoundingClientRect
+{
+	public double X { get; set; }
+	public double Y { get; set; }
+	public double Width { get; set; }
+	public double Height { get; set; }
+	public double Top { get; set; }
+	public double Right { get; set; }
+	public double Bottom { get; set; }
+	public double Left { get; set; }
 }
