@@ -8,10 +8,7 @@
              aria-live="polite"
              aria-relevant="additions text"
              aria-atomic="false">
-        <ol style="
-                --gap: @($"{Constants.Gap}px");
-                --width: @($"{Constants.ToastWidth}px");
-            " 
+        <ol style="--gap: @($"{Constants.Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset(Offset, MobileOffset)" 
             tabindex="-1" 
             data-sonner-toaster>
             @for( var index = 0; index < Toasts.Count; index++ )
@@ -24,6 +21,10 @@
 </CascadingValue>
 
 @code {
+    [Parameter] public Offset? Offset { get; set; }
+    [Parameter] public Offset? MobileOffset { get; set; }
+    [Parameter] public ToastOptions? ToastOptions { get; set; }
+
     internal List<ToastModel> Toasts { get; } = [];
 
     protected override void OnInitialized()
