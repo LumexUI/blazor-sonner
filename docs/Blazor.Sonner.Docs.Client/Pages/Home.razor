@@ -1,7 +1,7 @@
 ﻿@page "/"
+@inject ToastService Toast
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<button @onclick="@(() => Toast.Show( "Hello World!" ))">Show toast</button>
+<button @onclick="@(() => Toast.Show( "Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!" ))">Show toast</button>
