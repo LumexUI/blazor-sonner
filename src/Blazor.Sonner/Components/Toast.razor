@@ -6,6 +6,7 @@
 --index: @Index;
 --toasts-before: @Index;
 --z-index: @(Toasts.Count - Index);
+--offset: @($"{_offset.ToString( CultureInfo.InvariantCulture )}px");
 --initial-height: @($"{_initialHeight.ToString( CultureInfo.InvariantCulture )}px");
 "
     tabindex="0"
@@ -13,7 +14,7 @@
     data-styled="true"
     data-mounted="@_isMounted.ToAttr()"
     data-visible="@_isVisible.ToAttr()"
-    data-expanded="false"
+    data-expanded="@_isExpanded.ToAttr()"
     data-front="@_isFront.ToAttr()"
     data-y-position="@_position.Y"
     data-x-position="@_position.X">
@@ -40,8 +41,12 @@
     private bool _isMounted;
     private bool _isFront;
     private bool _isVisible;
+    private bool _isExpanded;
 
+    private int _heightIndex;
+    private double _offset;
     private double _initialHeight;
+    private double _previousToastsHeight;
 
     private (string Y, string X) _position;
 
@@ -53,6 +58,11 @@
 
         _isFront = Index == 0;
         _isVisible = Index + 1 <= Toaster.VisibleToasts;
+        _isExpanded = Toaster.Expanded;
+
+        _heightIndex = Math.Max( 0, Toaster.ToastHeights.FindIndex( h => h.ToastId == Model.Id ) );
+        _previousToastsHeight = Toaster.ToastHeights.Take( _heightIndex ).Sum( h => h.Value );
+        _offset = _heightIndex * 14 + _previousToastsHeight;
     }
 
     protected override async Task OnAfterRenderAsync( bool firstRender )

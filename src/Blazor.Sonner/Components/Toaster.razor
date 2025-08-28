@@ -22,7 +22,10 @@
                     data-sonner-toaster
                     data-sonner-theme="light"
                     data-y-position="@y"
-                    data-x-position="@x">
+                    data-x-position="@x"
+                    @onmouseenter="@(() => Expanded = true)"
+                    @onmousemove="@(() => Expanded = true)"
+                    @onmouseleave="@(() => Expanded = false)">
                     @for( var index = 0; index < FilteredToasts.Count; index++ )
                     {
                         var toast = FilteredToasts[index];
@@ -50,6 +53,9 @@
     [Parameter] public int VisibleToasts { get; set; } = Constants.VisibleToastsAmount;
     [Parameter] public int Gap { get; set; } = Constants.Gap;
 
+    internal bool Expanded { get; private set; }
+    internal List<Height> ToastHeights { get; } = [];
+
     internal List<ToastModel> FilteredToasts =>
         !string.IsNullOrWhiteSpace( Id )
             ? _toasts.Where( t => t.ToasterId == Id ).ToList()
@@ -61,8 +67,6 @@
         .Prepend( Position )
         .Distinct()
         .ToList();
-
-    internal List<Height> ToastHeights { get; } = [];
 
     private string FrontToastHeight => ToastHeights.Count > 0
         ? $"{ToastHeights[0].Value.ToString( CultureInfo.InvariantCulture )}px"
