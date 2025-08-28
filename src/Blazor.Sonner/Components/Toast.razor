@@ -31,6 +31,7 @@
     [Parameter] public int Index { get; set; }
     [Parameter] public ToastModel Model { get; set; } = default!;
     [Parameter] public Position Position { get; set; } = Position.BottomRight;
+    [Parameter] public EventCallback<Height> OnHeightChanged { get; set; }
 
     [CascadingParameter] private Toaster Toaster { get; set; } = default!;
 
@@ -60,7 +61,7 @@
         {
             // Trigger enter animation without using CSS animation
             await SetMountedAsync( true );
-            await SetHeight();
+            await SetHeightAsync();
         }
     }
 
@@ -72,12 +73,11 @@
         StateHasChanged();
     }
 
-    private async Task SetHeight()
+    private async Task SetHeightAsync()
     {
         var height = (await DomInterop.GetBoundingClientRect( _toastRef )).Height;
         _initialHeight = height;
 
-        Model.Height = new Height( Model.Id, height );
-        Toaster.Render();
+        await OnHeightChanged.InvokeAsync( new Height( Model.Id, height ) );
     }
 }

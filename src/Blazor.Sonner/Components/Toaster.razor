@@ -17,7 +17,7 @@
 
                 <ol @key="@position"
                     style="--gap: @($"{Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset( Offset, MobileOffset )
-                                   --front-toast-height: @FrontToastHeight;"
+                                           --front-toast-height: @FrontToastHeight;"
                     tabindex="-1"
                     data-sonner-toaster
                     data-sonner-theme="light"
@@ -32,7 +32,8 @@
                             <Toast @key="@toast.Id"
                                    Index="@index"
                                    Model="@toast"
-                                   Position="@position" />
+                                   Position="@position"
+                                   OnHeightChanged="@OnToastHeightChanged" />
                         }
                     }
                 </ol>
@@ -61,8 +62,10 @@
         .Distinct()
         .ToList();
 
-    private string FrontToastHeight => FilteredToasts.Count > 1
-        ? $"{FilteredToasts[1].Height.Value.ToString( CultureInfo.InvariantCulture )}px"
+    internal List<Height> ToastHeights { get; } = [];
+
+    private string FrontToastHeight => ToastHeights.Count > 0
+        ? $"{ToastHeights[0].Value.ToString( CultureInfo.InvariantCulture )}px"
         : "0px";
 
     private readonly List<ToastModel> _toasts = [];
@@ -77,6 +80,12 @@
     private void ShowToast( object? sender, ToastShowEventArgs args )
     {
         _toasts.Insert( 0, args.Toast );
+        StateHasChanged();
+    }
+
+    private void OnToastHeightChanged( Height height )
+    {
+        ToastHeights.Insert(0, height );
         StateHasChanged();
     }
 
