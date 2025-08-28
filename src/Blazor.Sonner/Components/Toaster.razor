@@ -17,7 +17,7 @@
 
                 <ol @key="@position"
                     style="--gap: @($"{Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset( Offset, MobileOffset )
-                                           --front-toast-height: @FrontToastHeight;"
+                                                   --front-toast-height: @FrontToastHeight;"
                     tabindex="-1"
                     data-sonner-toaster
                     data-sonner-theme="light"
@@ -36,7 +36,8 @@
                                    Index="@index"
                                    Model="@toast"
                                    Position="@position"
-                                   OnHeightChanged="@OnToastHeightChanged" />
+                                   OnDismiss="@RemoveToast"
+                                   OnHeightChanged="@SaveToastHeight" />
                         }
                     }
                 </ol>
@@ -52,6 +53,7 @@
     [Parameter] public Offset? MobileOffset { get; set; }
     [Parameter] public int VisibleToasts { get; set; } = Constants.VisibleToastsAmount;
     [Parameter] public int Gap { get; set; } = Constants.Gap;
+    [Parameter] public TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds( Constants.ToastLifetime );
 
     internal bool Expanded { get; private set; }
     internal List<Height> ToastHeights { get; } = [];
@@ -87,9 +89,16 @@
         StateHasChanged();
     }
 
-    private void OnToastHeightChanged( Height height )
+    private void RemoveToast( Guid id )
     {
-        ToastHeights.Insert(0, height );
+        _toasts.RemoveAll( x => x.Id == id );
+        ToastHeights.RemoveAll( x => x.ToastId == id );
+        StateHasChanged();
+    }
+
+    private void SaveToastHeight( Height height )
+    {
+        ToastHeights.Insert( 0, height );
         StateHasChanged();
     }
 

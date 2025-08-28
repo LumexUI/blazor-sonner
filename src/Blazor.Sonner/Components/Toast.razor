@@ -1,4 +1,5 @@
 ﻿@namespace Blazor.Sonner
+@implements IDisposable
 @inject DomInterop DomInterop
 
 <li @ref="@_toastRef"
@@ -13,14 +14,15 @@
     data-sonner-toast
     data-styled="true"
     data-mounted="@_isMounted.ToAttr()"
+    data-removed="@_isRemoved.ToAttr()"
     data-visible="@_isVisible.ToAttr()"
     data-expanded="@_isExpanded.ToAttr()"
     data-front="@_isFront.ToAttr()"
+    data-swipe-out="false"
     data-y-position="@_position.Y"
     data-x-position="@_position.X">
     <div data-content>
         <div data-title>@Model.Title</div>
-
         @if( !string.IsNullOrWhiteSpace( Model.Description ) )
         {
             <div data-description>@Model.Description</div>
@@ -32,16 +34,20 @@
     [Parameter] public int Index { get; set; }
     [Parameter] public ToastModel Model { get; set; } = default!;
     [Parameter] public Position Position { get; set; } = Position.BottomRight;
+    [Parameter] public EventCallback<Guid> OnDismiss { get; set; }
     [Parameter] public EventCallback<Height> OnHeightChanged { get; set; }
 
     [CascadingParameter] private Toaster Toaster { get; set; } = default!;
 
     private List<ToastModel> Toasts => Toaster.FilteredToasts;
 
+    private ToastTimer? _timer;
+
     private bool _isMounted;
-    private bool _isFront;
+    private bool _isRemoved;
     private bool _isVisible;
     private bool _isExpanded;
+    private bool _isFront;
 
     private int _heightIndex;
     private double _offset;
@@ -51,6 +57,13 @@
     private (string Y, string X) _position;
 
     private ElementReference _toastRef;
+
+    protected override void OnInitialized()
+    {
+        _timer = new ToastTimer( Toaster.Duration );
+        _timer.Completed += () => InvokeAsync( DismissAsync );
+        _timer.Start();
+    }
 
     protected override void OnParametersSet()
     {
@@ -73,6 +86,15 @@
             await SetMountedAsync( true );
             await SetHeightAsync();
         }
+
+        if( _isExpanded )
+        {
+            _timer?.Pause();
+        }
+        else
+        {
+            _timer?.Resume();
+        }
     }
 
     private async ValueTask SetMountedAsync( bool value )
@@ -83,11 +105,25 @@
         StateHasChanged();
     }
 
+    private async Task DismissAsync()
+    {
+        _isRemoved = true;
+        StateHasChanged();
+
+        await Task.Delay( Constants.TimeBeforeUnmount ); // Match with CSS transition duration
+        await OnDismiss.InvokeAsync( Model.Id );
+    }
+
     private async Task SetHeightAsync()
     {
         var height = (await DomInterop.GetBoundingClientRect( _toastRef )).Height;
         _initialHeight = height;
 
         await OnHeightChanged.InvokeAsync( new Height( Model.Id, height ) );
+    }
+
+    void IDisposable.Dispose()
+    {
+        _timer?.Dispose();
     }
 }
