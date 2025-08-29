@@ -7,7 +7,7 @@
 --index: @Index;
 --toasts-before: @Index;
 --z-index: @(Toasts.Count - Index);
---offset: @($"{_offset.ToString( CultureInfo.InvariantCulture )}px");
+--offset: @($"{(_isRemoved ? _offsetBeforeRemove.ToString( CultureInfo.InvariantCulture ) : _offset.ToString( CultureInfo.InvariantCulture ))}px");
 --initial-height: @($"{_initialHeight.ToString( CultureInfo.InvariantCulture )}px");
 "
     tabindex="0"
@@ -44,6 +44,7 @@
     [Parameter] public ToastModel Model { get; set; } = default!;
     [Parameter] public Position Position { get; set; } = Position.BottomRight;
     [Parameter] public EventCallback<Guid> OnDismiss { get; set; }
+    [Parameter] public EventCallback<Guid> OnDismissing { get; set; }
     [Parameter] public EventCallback<Height> OnHeightChanged { get; set; }
 
     [CascadingParameter] private Toaster Toaster { get; set; } = default!;
@@ -60,6 +61,7 @@
 
     private int _heightIndex;
     private double _offset;
+    private double _offsetBeforeRemove;
     private double _initialHeight;
     private double _previousToastsHeight;
 
@@ -70,7 +72,7 @@
     protected override void OnInitialized()
     {
         _timer = new ToastTimer( Toaster.Duration );
-        _timer.Completed += () => InvokeAsync( DismissAsync );
+        _timer.OnCompleted += () => InvokeAsync( DismissAsync );
         _timer.Start();
     }
 
@@ -117,8 +119,9 @@
     private async Task DismissAsync()
     {
         _isRemoved = true;
-        StateHasChanged();
+        _offsetBeforeRemove = _offset;
 
+        await OnDismissing.InvokeAsync( Model.Id );
         await Task.Delay( Constants.TimeBeforeUnmount ); // Match with CSS transition duration
         await OnDismiss.InvokeAsync( Model.Id );
     }

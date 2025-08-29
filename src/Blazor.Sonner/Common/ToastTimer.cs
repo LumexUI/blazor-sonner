@@ -5,21 +5,23 @@ namespace Blazor.Sonner.Common;
 internal sealed class ToastTimer( TimeSpan duration ) : IDisposable
 {
 	private readonly Stopwatch _stopwatch = new();
-	private readonly TimeSpan _tickInterval = TimeSpan.FromMilliseconds( duration.TotalMilliseconds / 100 );
 
 	private CancellationTokenSource? _cts;
 	private TimeSpan _pausedElapsed = TimeSpan.Zero;
 
-	public event Action? Completed;
+	public event Action? OnCompleted;
 
-	public TimeSpan Remaining =>
-		duration - (_pausedElapsed + (_stopwatch.IsRunning ? _stopwatch.Elapsed : TimeSpan.Zero));
-
-	public void Start()
+	private TimeSpan Remaining
 	{
-		_pausedElapsed = TimeSpan.Zero;
-		StartCore();
+		get
+		{
+			var elapsed = _pausedElapsed + (_stopwatch.IsRunning ? _stopwatch.Elapsed : TimeSpan.Zero);
+			var rem = duration - elapsed;
+			return rem <= TimeSpan.Zero ? TimeSpan.Zero : rem;
+		}
 	}
+
+	public void Start() => StartCore();
 
 	public void Pause()
 	{
@@ -28,10 +30,10 @@ internal sealed class ToastTimer( TimeSpan duration ) : IDisposable
 			return;
 		}
 
-		_cts?.Cancel();
-		_cts?.Dispose();
 		_stopwatch.Stop();
 		_pausedElapsed += _stopwatch.Elapsed;
+
+		Cleanup();
 	}
 
 	public void Resume()
@@ -48,31 +50,43 @@ internal sealed class ToastTimer( TimeSpan duration ) : IDisposable
 	{
 		try
 		{
-			while( !ct.IsCancellationRequested )
+			var remaining = Remaining;
+			if( remaining <= TimeSpan.Zero )
 			{
-				await Task.Delay( _tickInterval, ct );
-
-				if( Remaining <= TimeSpan.Zero )
-				{
-					Completed?.Invoke();
-					break;
-				}
+				OnCompleted?.Invoke();
+				return;
 			}
+
+			await Task.Delay( remaining, ct );
+			OnCompleted?.Invoke();
 		}
-		catch( TaskCanceledException ) { /* ignore */ }
+		catch( TaskCanceledException )
+		{
+			// paused or disposed
+		}
 	}
 
 	private void StartCore()
 	{
-		_cts = new CancellationTokenSource();
 		_stopwatch.Restart();
+
+		_cts?.Cancel();
+		_cts?.Dispose();
+		_cts = new CancellationTokenSource();
+
 		_ = RunAsync( _cts.Token );
+	}
+
+	private void Cleanup()
+	{
+		_cts?.Cancel();
+		_cts?.Dispose();
+		_cts = null;
 	}
 
 	public void Dispose()
 	{
-		_cts?.Cancel();
-		_cts?.Dispose();
 		_stopwatch.Stop();
+		Cleanup();
 	}
 }

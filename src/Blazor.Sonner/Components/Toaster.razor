@@ -18,7 +18,7 @@
                 <ol @key="@position"
                     dir="ltr"
                     style="--gap: @($"{Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset( Offset, MobileOffset )
-                                                   --front-toast-height: @FrontToastHeight;"
+                           --front-toast-height: @FrontToastHeight;"
                     tabindex="-1"
                     data-sonner-toaster
                     data-sonner-theme="light"
@@ -38,6 +38,7 @@
                                    Model="@toast"
                                    Position="@position"
                                    OnDismiss="@RemoveToast"
+                                   OnDismissing="@RemoveToastHeight"
                                    OnHeightChanged="@SaveToastHeight" />
                         }
                     }
@@ -83,7 +84,14 @@
         ToastService.OnShow += ShowToast;
     }
 
-    internal void Render() => StateHasChanged();
+    protected override void OnAfterRender( bool firstRender )
+    {
+        // Ensure expanded is always false when no toasts are present / only one left
+        if( _toasts.Count <= 1 )
+        {
+            Expanded = false;
+        }
+    }
 
     private void ShowToast( object? sender, ToastShowEventArgs args )
     {
@@ -94,14 +102,16 @@
     private void RemoveToast( Guid id )
     {
         _toasts.RemoveAll( x => x.Id == id );
+    }
+
+    private void RemoveToastHeight( Guid id )
+    {
         ToastHeights.RemoveAll( x => x.ToastId == id );
-        StateHasChanged();
     }
 
     private void SaveToastHeight( Height height )
     {
         ToastHeights.Insert( 0, height );
-        StateHasChanged();
     }
 
     void IDisposable.Dispose()
