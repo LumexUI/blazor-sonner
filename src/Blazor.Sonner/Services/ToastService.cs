@@ -4,17 +4,33 @@ namespace Blazor.Sonner.Services;
 
 public class ToastService
 {
-	internal event EventHandler<ToastShowEventArgs>? OnShow;
+	internal event EventHandler<ToastModel>? OnShow;
 
-	public void Show( string message, ToastOptions? options = null )
+	public void Show( string title, ToastModel? data = null )
+		=> Show( ToastType.Default, title, data );
+
+	public void Success( string title, ToastModel? data = null )
+		=> Show( ToastType.Success, title, data );
+
+	public void Warning( string title, ToastModel? data = null )
+		=> Show( ToastType.Warning, title, data );
+
+	public void Error( string title, ToastModel? data = null )
+		=> Show( ToastType.Error, title, data );
+
+	public void Info( string title, ToastModel? data = null )
+		=> Show( ToastType.Info, title, data );
+
+	private void Show( ToastType type, string title, ToastModel? data )
 	{
 		var toast = new ToastModel
 		{
 			Id = Guid.NewGuid(),
-			Title = message,
-			Description = options?.Description
+			Type = type,
+			Title = title,
+			Description = data?.Description,
 		};
 
-		OnShow?.Invoke( this, new ToastShowEventArgs( toast ) );
+		OnShow?.Invoke( this, toast );
 	}
 }

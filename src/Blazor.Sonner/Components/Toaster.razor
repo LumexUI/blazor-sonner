@@ -57,6 +57,7 @@
     [Parameter] public int Gap { get; set; } = Constants.Gap;
     [Parameter] public TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds( Constants.ToastLifetime );
     [Parameter] public bool CloseButton { get; set; }
+    [Parameter] public bool RichColors { get; set; }
 
     internal bool Expanded { get; private set; }
     internal List<Height> ToastHeights { get; } = [];
@@ -93,9 +94,9 @@
         }
     }
 
-    private void ShowToast( object? sender, ToastShowEventArgs args )
+    private void ShowToast( object? sender, ToastModel toast )
     {
-        _toasts.Insert( 0, args.Toast );
+        _toasts.Insert( 0, toast );
         StateHasChanged();
     }
 

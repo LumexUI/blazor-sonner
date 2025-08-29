@@ -12,7 +12,9 @@
 "
     tabindex="0"
     data-sonner-toast
+    data-type="@Model.TypeAsString"
     data-styled="true"
+    data-rich-colors="@Toaster.RichColors.ToAttr()"
     data-mounted="@_isMounted.ToAttr()"
     data-removed="@_isRemoved.ToAttr()"
     data-visible="@_isVisible.ToAttr()"
@@ -28,6 +30,11 @@
                 data-close-button @onclick="@DismissAsync">
             @Components.Assets.CloseIcon
         </button>
+    }
+
+    @if( Model.Type is not ToastType.Default )
+    {
+        <div data-icon>@Icon</div>
     }
 
     <div data-content>
@@ -50,6 +57,14 @@
     [CascadingParameter] private Toaster Toaster { get; set; } = default!;
 
     private List<ToastModel> Toasts => Toaster.FilteredToasts;
+    private RenderFragment? Icon => Model.Type switch
+    {
+        ToastType.Success => Components.Assets.SuccessIcon,
+        ToastType.Error => Components.Assets.ErrorIcon,
+        ToastType.Info => Components.Assets.InfoIcon,
+        ToastType.Warning => Components.Assets.WarningIcon,
+        _ => null
+    };
 
     private ToastTimer? _timer;
 

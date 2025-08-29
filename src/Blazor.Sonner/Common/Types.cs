@@ -11,7 +11,38 @@ public sealed record ToastModel
 	public string? ToasterId { get; set; }
 	public string? Title { get; set; }
 	public string? Description { get; set; }
+	public ToastType Type { get; set; }
 	public Position? Position { get; set; }
+
+	internal string TypeAsString => Type.ToString().ToLowerInvariant();
+}
+
+public enum ToastType
+{
+	Default,
+
+	Success,
+
+	Warning,
+
+	Error,
+
+	Info
+}
+
+public enum Position
+{
+	TopLeft,
+
+	TopCenter,
+
+	TopRight,
+
+	BottomLeft,
+
+	BottomCenter,
+
+	BottomRight
 }
 
 public readonly struct Offset( float top, float left, float bottom, float right )
@@ -34,31 +65,6 @@ public readonly struct Height( Guid toastId, double value )
 {
 	public readonly Guid ToastId = toastId;
 	public readonly double Value = value;
-}
-
-public enum Position
-{
-	TopLeft,
-
-	TopCenter,
-
-	TopRight,
-
-	BottomLeft,
-
-	BottomCenter,
-
-	BottomRight
-}
-
-internal sealed class ToastShowEventArgs : EventArgs
-{
-	public ToastModel Toast { get; }
-
-	public ToastShowEventArgs( ToastModel toast )
-	{
-		Toast = toast;
-	}
 }
 
 internal sealed record BoundingClientRect
