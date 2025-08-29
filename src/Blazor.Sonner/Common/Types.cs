@@ -45,6 +45,15 @@ public enum Position
 	BottomRight
 }
 
+public enum DocumentDirection
+{
+	Ltr,
+
+	Rtl,
+
+	Auto
+}
+
 public readonly struct Offset( float top, float left, float bottom, float right )
 {
 	public readonly float Top = top;

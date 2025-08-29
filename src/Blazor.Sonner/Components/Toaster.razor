@@ -1,5 +1,6 @@
 ﻿@namespace Blazor.Sonner
 @implements IDisposable
+@inject DomInterop DomInterop
 @inject ToastService ToastService
 
 <CascadingValue TValue="Toaster" Value="@this" IsFixed="@true">
@@ -16,9 +17,9 @@
                 var (y, x) = Utils.MapPosition( position );
 
                 <ol @key="@position"
-                    dir="ltr"
+                    dir="@_dir.ToString().ToLowerInvariant()"
                     style="--gap: @($"{Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset( Offset, MobileOffset )
-                           --front-toast-height: @FrontToastHeight;"
+                                                   --front-toast-height: @FrontToastHeight;"
                     tabindex="-1"
                     data-sonner-toaster
                     data-sonner-theme="light"
@@ -58,6 +59,7 @@
     [Parameter] public TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds( Constants.ToastLifetime );
     [Parameter] public bool CloseButton { get; set; }
     [Parameter] public bool RichColors { get; set; }
+    [Parameter] public DocumentDirection Dir { get; set; } = DocumentDirection.Auto;
 
     internal bool Expanded { get; private set; }
     internal List<Height> ToastHeights { get; } = [];
@@ -80,13 +82,21 @@
 
     private readonly List<ToastModel> _toasts = [];
 
+    private DocumentDirection _dir;
+
     protected override void OnInitialized()
     {
         ToastService.OnShow += ShowToast;
     }
 
-    protected override void OnAfterRender( bool firstRender )
+    protected override async Task OnAfterRenderAsync( bool firstRender )
     {
+        _dir = Dir switch
+        {
+            DocumentDirection.Auto => await DomInterop.GetDocumentDirectionAsync(),
+            _ => Dir
+        };
+
         // Ensure expanded is always false when no toasts are present / only one left
         if( _toasts.Count <= 1 )
         {
