@@ -16,6 +16,7 @@
                 var (y, x) = Utils.MapPosition( position );
 
                 <ol @key="@position"
+                    dir="ltr"
                     style="--gap: @($"{Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset( Offset, MobileOffset )
                                                    --front-toast-height: @FrontToastHeight;"
                     tabindex="-1"
@@ -54,6 +55,7 @@
     [Parameter] public int VisibleToasts { get; set; } = Constants.VisibleToastsAmount;
     [Parameter] public int Gap { get; set; } = Constants.Gap;
     [Parameter] public TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds( Constants.ToastLifetime );
+    [Parameter] public bool CloseButton { get; set; }
 
     internal bool Expanded { get; private set; }
     internal List<Height> ToastHeights { get; } = [];
