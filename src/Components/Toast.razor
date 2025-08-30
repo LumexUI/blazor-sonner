@@ -101,7 +101,7 @@
 
         _heightIndex = Math.Max( 0, Toaster.ToastHeights.FindIndex( h => h.ToastId == Model.Id ) );
         _previousToastsHeight = Toaster.ToastHeights.Take( _heightIndex ).Sum( h => h.Value );
-        _offset = _heightIndex * 14 + _previousToastsHeight;
+        _offset = _heightIndex * Toaster.Gap + _previousToastsHeight;
     }
 
     protected override async Task OnAfterRenderAsync( bool firstRender )
