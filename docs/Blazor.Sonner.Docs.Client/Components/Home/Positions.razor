@@ -1,0 +1,50 @@
+﻿@namespace Blazor.Sonner.Docs.Client.Components
+@inject ToastService Toast
+
+<section>
+    <h2>Position</h2>
+    <p>Swipe direction changes depending on the position.</p>
+    <div class="flex flex-wrap gap-2">
+        @foreach( var (key, value) in _positions )
+        {
+            <Button IsActive="@(key == Position)"
+                    OnClick="@(() => HandleClickAsync( key ))">
+                @value.Name
+            </Button>
+        }
+    </div>
+    <CodeBlock Code="@_positions[Position]?.Snippet" />
+</section>
+
+@code {
+    [Parameter] public Common.Position Position { get; set; }
+    [Parameter] public EventCallback<Common.Position> PositionChanged { get; set; }
+
+    private Dictionary<Common.Position, PositionDescriptor> _positions = default!;
+
+    protected override void OnInitialized()
+    {
+        _positions = new Dictionary<Common.Position, PositionDescriptor>()
+        {
+            [Common.Position.TopLeft] = new( "Top-left", "topLeft" ),
+            [Common.Position.TopCenter] = new( "Top-center", "topCenter" ),
+            [Common.Position.TopRight] = new( "Top-right", "topRight" ),
+            [Common.Position.BottomLeft] = new( "Bottom-left", "bottomLeft" ),
+            [Common.Position.BottomCenter] = new( "Bottom-center", "bottomCenter" ),
+            [Common.Position.BottomRight] = new( "Bottom-right", "bottomRight" )
+        };
+    }
+
+    private async Task HandleClickAsync( Common.Position position )
+    {
+        await PositionChanged.InvokeAsync( position );
+        Toast.RemoveAll();
+
+        Toast.Show( "Event has been created", new()
+        {
+            Description = "Monday, January 3rd at 6:00pm"
+        } );
+    }
+
+    private record PositionDescriptor( string Name, string Snippet );
+}

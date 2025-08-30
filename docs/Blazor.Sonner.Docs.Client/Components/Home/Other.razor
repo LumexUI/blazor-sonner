@@ -1,0 +1,59 @@
+﻿@namespace Blazor.Sonner.Docs.Client.Components
+@inject ToastService Toast
+
+<section>
+    <h2>Other</h2>
+    <div class="flex flex-wrap gap-2">
+        @foreach( var (key, value) in _richColors )
+        {
+            <Button OnClick="@(() => OnRichColorClick( key ))">@value.Name</Button>
+        }
+    </div>
+    <CodeBlock Code="@_activeSnippet" />
+</section>
+
+@code {
+    [Parameter] public bool RichColors { get; set; }
+    [Parameter] public EventCallback<bool> RichColorsChanged { get; set; }
+
+    private Dictionary<ToastType, RichColorDescriptor> _richColors = default!;
+
+    private string _activeSnippet = "richColorsSucess";
+
+    protected override void OnInitialized()
+    {
+        _richColors = new Dictionary<ToastType, RichColorDescriptor>()
+        {
+            [ToastType.Success] = new( "Rich Colors Success", "richColorsSucess" ),
+            [ToastType.Warning] = new( "Rich Colors Warning", "richColorsWarning" ),
+            [ToastType.Error] = new( "Rich Colors Error", "richColorsError" ),
+            [ToastType.Info] = new( "Rich Colors Info", "richColorsInfo" ),
+        };
+    }
+
+    private Task OnRichColorClick( ToastType type )
+    {
+        _activeSnippet = _richColors[type].Snippet;
+
+        switch( type )
+        {
+            case ToastType.Success:
+                Toast.Success( "Event has been created" );
+                break;
+            case ToastType.Warning:
+                Toast.Warning( "Event start time cannot be earlier than 8am" );
+                break;
+            case ToastType.Error:
+                Toast.Error( "Event has not been created" );
+                break;
+            case ToastType.Info:
+                Toast.Info( "Be at the area 10 minutes before the event time" );
+                break;
+        }
+        ;
+
+        return RichColorsChanged.InvokeAsync( true );
+    }
+
+    private record RichColorDescriptor( string Name, string Snippet );
+}

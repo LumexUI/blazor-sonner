@@ -1,7 +1,30 @@
 ﻿@page "/"
 @inject ToastService Toast
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Blazor Sonner</PageTitle>
 
-<button @onclick="@(() => Toast.Show( "Hello World!" ))">Show toast</button>
-<button @onclick="@(() => Toast.Show( "Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!" ))">Show toast</button>
+<div class="pt-[100px]">
+    <Toaster Expand="@_expand"
+             Position="@_position"
+             RichColors="@_richColors" />
+
+    <main class="container max-w-2xl mx-auto px-4">
+        <Hero />
+
+        <div class="flex flex-col mt-24 gap-14">
+            <Installation />
+            <Usage />
+            <Types />
+            <Positions @bind-Position="@_position" />
+            <ExpandModes @bind-Expand="@_expand" />
+            <Other @bind-RichColors="@_richColors" />
+        </div>
+    </main>
+    <Footer />
+</div>
+
+@code {
+    private Common.Position _position = Common.Position.BottomRight;
+    private bool _expand;
+    private bool _richColors;
+}

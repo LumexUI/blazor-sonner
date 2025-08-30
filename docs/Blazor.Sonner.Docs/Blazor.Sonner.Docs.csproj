@@ -1,14 +1,56 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Blazor.Sonner.Docs.Client\Blazor.Sonner.Docs.Client.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.8" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Blazor.Sonner.Docs.Client\Blazor.Sonner.Docs.Client.csproj" />
+	</ItemGroup>
+
+	<Target Name="InstallTailwind" AfterTargets="Build" Condition="!Exists('tailwindcss.exe')">
+		<PropertyGroup>
+			<IsLinux>$([MSBuild]::IsOSPlatform('Linux'))</IsLinux>
+			<IsWindows>$([MSBuild]::IsOSPlatform('Windows'))</IsWindows>
+		</PropertyGroup>
+
+		<PropertyGroup>
+			<TailwindVersion>v4.1.12</TailwindVersion>
+			<TailwindExe Condition="$(IsLinux)">tailwindcss-linux-x64</TailwindExe>
+			<TailwindExe Condition="$(IsWindows)">tailwindcss-windows-x64.exe</TailwindExe>
+			<TailwindUrl>https://github.com/tailwindlabs/tailwindcss/releases/download/$(TailwindVersion)/$(TailwindExe)</TailwindUrl>
+		</PropertyGroup>
+
+		<!-- Download Tailwind CLI -->
+		<Exec Command="curl -LO $(TailwindUrl)" />
+
+		<!-- Rename the file (Windows) -->
+		<Exec Command="ren $(TailwindExe) tailwindcss.exe" Condition="$(IsWindows)" />
+
+		<!-- Rename the file (Linux) -->
+		<Exec Command="mv $(TailwindExe) tailwindcss" Condition="$(IsLinux)" />
+		<Exec Command="chmod +x tailwindcss" Condition="$(IsLinux)" />
+	</Target>
+
+	<Target Name="RunTailwind" AfterTargets="InstallTailwind">
+		<PropertyGroup>
+			<IsLinux>$([MSBuild]::IsOSPlatform('Linux'))</IsLinux>
+			<IsWindows>$([MSBuild]::IsOSPlatform('Windows'))</IsWindows>
+		</PropertyGroup>
+
+		<PropertyGroup>
+			<TailwindCmd Condition="$(IsLinux)">./tailwindcss</TailwindCmd>
+			<TailwindCmd Condition="$(IsWindows)">tailwindcss</TailwindCmd>
+		</PropertyGroup>
+
+		<Exec Command="$(TailwindCmd) -i ./Styles/globals.css -o ./wwwroot/css/app.css" Condition="'$(Configuration)' == 'Debug'" />
+		<Exec Command="$(TailwindCmd) -i ./Styles/globals.css -o ./wwwroot/css/app.css --minify" Condition="'$(Configuration)' == 'Release'" />
+	</Target>
 
 </Project>

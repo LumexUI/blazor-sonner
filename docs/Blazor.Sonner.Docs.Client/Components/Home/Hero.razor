@@ -1,0 +1,33 @@
+﻿@namespace Blazor.Sonner.Docs.Client.Components
+@inject ToastService Toast
+
+<section class="flex flex-col items-center gap-3">
+    <div class="relative flex flex-col mx-auto h-[100px] w-[400px] mask-linear-0 mask-linear-from-transparent mask-linear-to-35% mask-linear-to-black">
+        @foreach( var toast in Enumerable.Range( 0, 3 ) )
+        {
+            <div class="absolute left-1/2 bottom-0 -translate-x-1/2 w-sm h-10 border border-border rounded-md bg-white shadow-[0_4px_12px_#0000001a] first:-translate-y-[60%] first:scale-90 nth-2:-translate-y-[30%] nth-2:scale-95" />
+        }
+    </div>
+
+    <h1 class="z-10 -mt-8 font-bold text-5xl text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-indigo-950">Blazor Sonner</h1>
+    <p class="mb-3 text-[17px] text-center">
+        An opinionated toast component for Blazor.
+        <br />
+        A port of Emil Kowalski's Sonner.
+    </p>
+
+    <div class="flex gap-2">
+        <button class="btn btn-primary" @onclick="@ShowToast">Render a toast</button>
+        <a href="https://github.com/LumexUI/blazor-sonner" target="_blank" class="btn">GitHub</a>
+    </div>
+</section>
+
+@code {
+    private void ShowToast()
+    {
+        Toast.Show( "Blazor Sonner", new()
+        {
+            Description = "An opinionated toast component for Blazor."
+        } );
+    }
+}

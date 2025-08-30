@@ -1,0 +1,11 @@
+﻿<button class="px-3 py-2 border border-border rounded-md text-[13px] font-medium bg-zinc-50 transition-colors cursor-pointer whitespace-nowrap select-none hover:bg-zinc-100/60 hover:border-zinc-200 data-[active=true]:bg-zinc-100 data-[active=true]:border-zinc-300"
+        data-active="@IsActive.ToString().ToLower()"
+        @onclick="@(() => OnClick.InvokeAsync())">
+    @ChildContent
+</button>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback OnClick { get; set; }
+    [Parameter] public bool IsActive { get; set; }
+}

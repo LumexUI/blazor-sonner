@@ -1,0 +1,8 @@
+﻿<pre><code class="language-razor">@using Blazor.Sonner
+@inject ToastService Toast
+
+&lt;Toaster /&gt;
+&lt;button @onclick=&quot;@(() =&gt; Toast.Show(&quot;My first toast&quot;))&quot;&gt;
+    Give me a toast
+&lt;/button&gt;
+</code></pre>

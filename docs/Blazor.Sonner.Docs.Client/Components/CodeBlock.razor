@@ -1,0 +1,87 @@
+﻿<div class="relative group @Class">
+    <button class="absolute top-3 right-3 z-10 size-[26px] flex items-center justify-center border border-zinc-200 rounded-md bg-white cursor-pointer opacity-0 transition-[background,opacity] group-hover:opacity-100" data-copy @onclick="@HandleCopy">
+        @if( _isCopying )
+        {
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="14"
+                 height="14"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.5"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path d="M20 6 9 17l-5-5" />
+            </svg>
+        }
+        else
+        {
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="14"
+                 height="14"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.5"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path d="M8 17.929H6c-1.105 0-2-.912-2-2.036V5.036C4 3.91 4.895 3 6 3h8c1.105 0 2 .911 2 2.036v1.866m-6 .17h8c1.105 0 2 .91 2 2.035v10.857C20 21.09 19.105 22 18 22h-8c-1.105 0-2-.911-2-2.036V9.107c0-1.124.895-2.036 2-2.036z" />
+            </svg>
+        }
+    </button>
+
+
+    <div @ref="@_codeBlockRef" class="relative my-4 border border-border rounded-md overflow-hidden" data-code-block>
+        <div class="relative p-4 text-[13px] bg-surface" data-code>
+            @_renderCodeSnippet
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Code { get; set; } = default!;
+    [Parameter] public string? Class { get; set; }
+
+    [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+
+    private readonly RenderFragment _renderCodeSnippet;
+
+    private ElementReference _codeBlockRef;
+    private bool _isCopying;
+
+    public CodeBlock()
+    {
+        _renderCodeSnippet = RenderCodeSnippet;
+    }
+
+    protected override async Task OnAfterRenderAsync( bool firstRender )
+    {
+        await JSRuntime.InvokeVoidAsync( "Prism.highlightAllUnder", _codeBlockRef );
+    }
+
+    private async Task HandleCopy()
+    {
+        _isCopying = true;
+        await JSRuntime.InvokeVoidAsync( "copyToClipboard", _codeBlockRef );
+
+        await Task.Delay( 2000 );
+        _isCopying = false;
+        StateHasChanged();
+    }
+
+    private void RenderCodeSnippet( RenderTreeBuilder builder )
+    {
+        var resourceName = typeof( CodeBlock ).Assembly
+            .GetManifestResourceNames()
+            .FirstOrDefault( x => x.Contains( $"{Code}.html" ) );
+
+        if( !string.IsNullOrEmpty( resourceName ) )
+        {
+            using var resourceStream = typeof( CodeBlock ).Assembly.GetManifestResourceStream( resourceName );
+            using var reader = new StreamReader( resourceStream! );
+            var content = reader.ReadToEnd();
+
+            builder.AddMarkupContent( 0, content );
+        }
+    }
+}

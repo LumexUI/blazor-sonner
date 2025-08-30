@@ -1,0 +1,20 @@
+.token.comment,
+.token.operator,
+.token.punctuation {
+    color: var(--color-zinc-600)
+}
+
+.token.boolean,
+.token.tag,
+.token.function {
+    color: var(--color-zinc-950)
+}
+
+
+.token.string,
+.token.attr-name,
+.token.string
+.token.attr-value,
+.token.keyword {
+    color: var(--color-zinc-500)
+}

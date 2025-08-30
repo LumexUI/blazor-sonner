@@ -1,0 +1,34 @@
+﻿@namespace Blazor.Sonner.Docs.Client.Components
+@inject ToastService Toast
+
+<section>
+    <h2>Expand</h2>
+    <p>You can have toasts expanded by default using the <code>Expand</code> parameter.</p>
+    <div class="flex flex-wrap gap-2">
+        <Button IsActive="@(!Expand)"
+                OnClick="@(() => HandleClickAsync( false ))">
+            Default
+        </Button>
+
+        <Button IsActive="@Expand"
+                OnClick="@(() => HandleClickAsync( true ))">
+            Expand
+        </Button>
+    </div>
+    <CodeBlock Code="@(Expand ? "expand" : "noExpand")" />
+</section>
+
+@code {
+    [Parameter] public bool Expand { get; set; }
+    [Parameter] public EventCallback<bool> ExpandChanged { get; set; }
+
+    private Task HandleClickAsync( bool expand )
+    {
+        Toast.Show( "Event has been created", new()
+        {
+            Description = "Monday, January 3rd at 6:00pm"
+        } );
+
+        return ExpandChanged.InvokeAsync( expand );
+    }
+}

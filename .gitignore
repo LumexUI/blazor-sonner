@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+/docs/Blazor.Sonner.Docs/**/*/css
+/docs/Blazor.Sonner.Docs/*.exe
