@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder( args );
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
+	.AddInteractiveServerComponents()
 	.AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddSonner();
@@ -29,6 +30,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
+	.AddInteractiveServerRenderMode()
 	.AddInteractiveWebAssemblyRenderMode()
 	.AddAdditionalAssemblies( typeof( Blazor.Sonner.Docs.Client._Imports ).Assembly );
 
