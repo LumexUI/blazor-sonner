@@ -1,0 +1,28 @@
+name: Publish to NuGet
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: | 
+          8.0.x
+          9.0.x
+
+    - name: Create NuGet package
+      run: dotnet pack -c Release --output nupkgs
+
+    - name: Push to NuGet
+      run: dotnet nuget push nupkgs/*.nupkg -k ${{secrets.NUGET_TOKEN}} -s https://api.nuget.org/v3/index.json
