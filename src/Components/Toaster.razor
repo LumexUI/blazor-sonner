@@ -51,7 +51,7 @@
 
 @code {
     [Parameter] public string? Id { get; set; }
-    [Parameter] public Position Position { get; set; } = Position.BottomRight;
+    [Parameter] public ToastPosition Position { get; set; } = ToastPosition.BottomRight;
     [Parameter] public Offset? Offset { get; set; }
     [Parameter] public Offset? MobileOffset { get; set; }
     [Parameter] public int VisibleToasts { get; set; } = Constants.VisibleToastsAmount;
@@ -70,7 +70,7 @@
             ? _toasts.Where( t => t.ToasterId == Id ).ToList()
             : _toasts.Where( t => string.IsNullOrWhiteSpace( t.ToasterId ) ).ToList();
 
-    private List<Position> PossiblePositions => FilteredToasts
+    private List<ToastPosition> PossiblePositions => FilteredToasts
         .Where( t => t.Position.HasValue )
         .Select( t => t.Position!.Value )
         .Prepend( Position )

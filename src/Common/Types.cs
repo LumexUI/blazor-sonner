@@ -12,7 +12,7 @@ public sealed record ToastModel
 	public string? Title { get; set; }
 	public string? Description { get; set; }
 	public ToastType Type { get; set; }
-	public Position? Position { get; set; }
+	public ToastPosition? Position { get; set; }
 
 	internal string TypeAsString => Type.ToString().ToLowerInvariant();
 }
@@ -30,7 +30,7 @@ public enum ToastType
 	Info
 }
 
-public enum Position
+public enum ToastPosition
 {
 	TopLeft,
 

@@ -49,7 +49,7 @@
 @code {
     [Parameter] public int Index { get; set; }
     [Parameter] public ToastModel Model { get; set; } = default!;
-    [Parameter] public Position Position { get; set; } = Position.BottomRight;
+    [Parameter] public ToastPosition Position { get; set; } = ToastPosition.BottomRight;
     [Parameter] public EventCallback<Guid> OnDismiss { get; set; }
     [Parameter] public EventCallback<Guid> OnDismissing { get; set; }
     [Parameter] public EventCallback<Height> OnHeightChanged { get; set; }

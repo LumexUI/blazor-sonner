@@ -17,25 +17,25 @@
 </section>
 
 @code {
-    [Parameter] public Common.Position Position { get; set; }
-    [Parameter] public EventCallback<Common.Position> PositionChanged { get; set; }
+    [Parameter] public Common.ToastPosition Position { get; set; }
+    [Parameter] public EventCallback<Common.ToastPosition> PositionChanged { get; set; }
 
-    private Dictionary<Common.Position, PositionDescriptor> _positions = default!;
+    private Dictionary<Common.ToastPosition, PositionDescriptor> _positions = default!;
 
     protected override void OnInitialized()
     {
-        _positions = new Dictionary<Common.Position, PositionDescriptor>()
+        _positions = new Dictionary<Common.ToastPosition, PositionDescriptor>()
         {
-            [Common.Position.TopLeft] = new( "Top-left", "topLeft" ),
-            [Common.Position.TopCenter] = new( "Top-center", "topCenter" ),
-            [Common.Position.TopRight] = new( "Top-right", "topRight" ),
-            [Common.Position.BottomLeft] = new( "Bottom-left", "bottomLeft" ),
-            [Common.Position.BottomCenter] = new( "Bottom-center", "bottomCenter" ),
-            [Common.Position.BottomRight] = new( "Bottom-right", "bottomRight" )
+            [Common.ToastPosition.TopLeft] = new( "Top-left", "topLeft" ),
+            [Common.ToastPosition.TopCenter] = new( "Top-center", "topCenter" ),
+            [Common.ToastPosition.TopRight] = new( "Top-right", "topRight" ),
+            [Common.ToastPosition.BottomLeft] = new( "Bottom-left", "bottomLeft" ),
+            [Common.ToastPosition.BottomCenter] = new( "Bottom-center", "bottomCenter" ),
+            [Common.ToastPosition.BottomRight] = new( "Bottom-right", "bottomRight" )
         };
     }
 
-    private async Task HandleClickAsync( Common.Position position )
+    private async Task HandleClickAsync( Common.ToastPosition position )
     {
         await PositionChanged.InvokeAsync( position );
         Toast.RemoveAll();

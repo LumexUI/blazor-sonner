@@ -45,16 +45,16 @@ internal static class Utils
 		}
 	}
 
-	public static (string, string) MapPosition( Position position )
+	public static (string, string) MapPosition( ToastPosition position )
 	{
 		return position switch
 		{
-			Position.TopLeft => ("top", "left"),
-			Position.TopCenter => ("top", "center"),
-			Position.TopRight => ("top", "right"),
-			Position.BottomLeft => ("bottom", "left"),
-			Position.BottomCenter => ("bottom", "center"),
-			Position.BottomRight => ("bottom", "right"),
+			ToastPosition.TopLeft => ("top", "left"),
+			ToastPosition.TopCenter => ("top", "center"),
+			ToastPosition.TopRight => ("top", "right"),
+			ToastPosition.BottomLeft => ("bottom", "left"),
+			ToastPosition.BottomCenter => ("bottom", "center"),
+			ToastPosition.BottomRight => ("bottom", "right"),
 			_ => ("bottom", "right")
 		};
 	}
