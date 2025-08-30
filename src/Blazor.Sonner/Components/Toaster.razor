@@ -19,7 +19,7 @@
                 <ol @key="@position"
                     dir="@_dir.ToString().ToLowerInvariant()"
                     style="--gap: @($"{Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset( Offset, MobileOffset )
-                                                   --front-toast-height: @FrontToastHeight;"
+                                                           --front-toast-height: @FrontToastHeight;"
                     tabindex="-1"
                     data-sonner-toaster
                     data-sonner-theme="light"
@@ -57,6 +57,7 @@
     [Parameter] public int VisibleToasts { get; set; } = Constants.VisibleToastsAmount;
     [Parameter] public int Gap { get; set; } = Constants.Gap;
     [Parameter] public TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds( Constants.ToastLifetime );
+    [Parameter] public bool Expand { get; set; }
     [Parameter] public bool CloseButton { get; set; }
     [Parameter] public bool RichColors { get; set; }
     [Parameter] public DocumentDirection Dir { get; set; } = DocumentDirection.Auto;

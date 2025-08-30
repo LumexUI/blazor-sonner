@@ -8,7 +8,7 @@
 --toasts-before: @Index;
 --z-index: @(Toasts.Count - Index);
 --offset: @($"{(_isRemoved ? _offsetBeforeRemove.ToString( CultureInfo.InvariantCulture ) : _offset.ToString( CultureInfo.InvariantCulture ))}px");
---initial-height: @($"{_initialHeight.ToString( CultureInfo.InvariantCulture )}px");
+--initial-height: @(Toaster.Expand ? "auto" : $"{_initialHeight.ToString( CultureInfo.InvariantCulture )}px");
 "
     tabindex="0"
     data-sonner-toast
@@ -18,7 +18,7 @@
     data-mounted="@_isMounted.ToAttr()"
     data-removed="@_isRemoved.ToAttr()"
     data-visible="@_isVisible.ToAttr()"
-    data-expanded="@_isExpanded.ToAttr()"
+    data-expanded="@((_isExpanded || (Toaster.Expand && _isMounted)).ToAttr())"
     data-front="@_isFront.ToAttr()"
     data-swipe-out="false"
     data-y-position="@_position.Y"
