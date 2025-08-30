@@ -6,7 +6,8 @@
 <div class="pt-[100px]">
     <Toaster Expand="@_expand"
              Position="@_position"
-             RichColors="@_richColors" />
+             RichColors="@_richColors"
+             CloseButton="@_closeButton" />
 
     <main class="container max-w-2xl mx-auto px-4">
         <Hero />
@@ -17,7 +18,7 @@
             <Types />
             <Positions @bind-Position="@_position" />
             <ExpandModes @bind-Expand="@_expand" />
-            <Other @bind-RichColors="@_richColors" />
+            <Other @bind-RichColors="@_richColors" @bind-CloseButton="@_closeButton" />
         </div>
     </main>
     <Footer />
@@ -27,4 +28,5 @@
     private Common.ToastPosition _position = Common.ToastPosition.BottomRight;
     private bool _expand;
     private bool _richColors;
+    private bool _closeButton;
 }

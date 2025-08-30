@@ -8,13 +8,19 @@
         {
             <Button OnClick="@(() => OnRichColorClick( key ))">@value.Name</Button>
         }
+
+        <Button IsActive="@CloseButton" OnClick="@OnCloseButtonClick">
+            Close Button: @(CloseButton ? "True" : "False")
+        </Button>
     </div>
     <CodeBlock Code="@_activeSnippet" />
 </section>
 
 @code {
     [Parameter] public bool RichColors { get; set; }
+    [Parameter] public bool CloseButton { get; set; }
     [Parameter] public EventCallback<bool> RichColorsChanged { get; set; }
+    [Parameter] public EventCallback<bool> CloseButtonChanged { get; set; }
 
     private Dictionary<ToastType, RichColorDescriptor> _richColors = default!;
 
@@ -50,9 +56,19 @@
                 Toast.Info( "Be at the area 10 minutes before the event time" );
                 break;
         }
-        ;
 
         return RichColorsChanged.InvokeAsync( true );
+    }
+
+    private Task OnCloseButtonClick()
+    {
+        CloseButton = !CloseButton;
+        Toast.Show( "Event has been created", new ToastModel()
+        {
+            Description = "Monday, January 3rd at 6:00pm"
+        } );
+
+        return CloseButtonChanged.InvokeAsync( CloseButton );
     }
 
     private record RichColorDescriptor( string Name, string Snippet );
