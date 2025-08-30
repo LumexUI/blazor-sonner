@@ -5,6 +5,7 @@ namespace Blazor.Sonner.Services;
 public class ToastService
 {
 	internal event EventHandler<ToastModel>? OnShow;
+	internal event EventHandler? OnRemoveAll;
 
 	public void Show( string title, ToastModel? data = null )
 		=> Show( ToastType.Default, title, data );
@@ -20,6 +21,11 @@ public class ToastService
 
 	public void Info( string title, ToastModel? data = null )
 		=> Show( ToastType.Info, title, data );
+
+	public void RemoveAll()
+	{
+		OnRemoveAll?.Invoke( this, EventArgs.Empty );
+	}
 
 	private void Show( ToastType type, string title, ToastModel? data )
 	{

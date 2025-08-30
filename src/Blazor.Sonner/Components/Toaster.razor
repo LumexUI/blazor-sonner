@@ -87,6 +87,7 @@
     protected override void OnInitialized()
     {
         ToastService.OnShow += ShowToast;
+        ToastService.OnRemoveAll += RemoveToasts;
     }
 
     protected override async Task OnAfterRenderAsync( bool firstRender )
@@ -110,6 +111,12 @@
         StateHasChanged();
     }
 
+    private void RemoveToasts( object? sender, EventArgs args )
+    {
+        _toasts.Clear();
+        ToastHeights.Clear();
+    }
+
     private void RemoveToast( Guid id )
     {
         _toasts.RemoveAll( x => x.Id == id );
@@ -128,5 +135,6 @@
     void IDisposable.Dispose()
     {
         ToastService.OnShow -= ShowToast;
+        ToastService.OnRemoveAll -= RemoveToasts;
     }
 }
