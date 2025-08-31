@@ -2,14 +2,14 @@
 @inject ToastService Toast
 
 <section class="flex flex-col items-center gap-3">
-    <div class="relative flex flex-col mx-auto h-[100px] w-[400px] mask-linear-0 mask-linear-from-transparent mask-linear-to-35% mask-linear-to-black">
+    <div class="relative w-full flex flex-col mx-auto h-[100px] mask-linear-0 mask-linear-from-transparent mask-linear-to-35% mask-linear-to-black sm:w-[400px]">
         @foreach( var toast in Enumerable.Range( 0, 3 ) )
         {
             <div class="absolute left-1/2 bottom-0 -translate-x-1/2 w-sm h-10 border border-border rounded-md bg-white shadow-[0_4px_12px_#0000001a] first:-translate-y-[60%] first:scale-90 nth-2:-translate-y-[30%] nth-2:scale-95" />
         }
     </div>
 
-    <h1 class="z-10 -mt-8 font-bold text-5xl text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-indigo-950">Blazor Sonner</h1>
+    <h1 class="z-10 -mt-8 font-bold text-4xl text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-indigo-950 sm:text-5xl">Blazor Sonner</h1>
     <p class="mb-3 text-[17px] text-center">
         An opinionated toast component for Blazor.
         <br />

@@ -14,6 +14,11 @@
 }
 
 @layer base {
+    /* Disable double-tap zoom */
+    * {
+        touch-action: manipulation;
+    }
+
     body {
         @apply bg-white text-zinc-950 antialiased;
     }
