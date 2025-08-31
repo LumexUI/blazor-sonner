@@ -49,8 +49,8 @@
 			<TailwindCmd Condition="$(IsWindows)">tailwindcss</TailwindCmd>
 		</PropertyGroup>
 
-		<Exec Command="$(TailwindCmd) -i ./Styles/globals.css -o ./wwwroot/css/app.css" Condition="'$(Configuration)' == 'Debug'" />
-		<Exec Command="$(TailwindCmd) -i ./Styles/globals.css -o ./wwwroot/css/app.css --minify" Condition="'$(Configuration)' == 'Release'" />
+		<Exec Command="$(TailwindCmd) -i ./Styles/globals.css -o ./wwwroot/css/docs.css" Condition="'$(Configuration)' == 'Debug'" />
+		<Exec Command="$(TailwindCmd) -i ./Styles/globals.css -o ./wwwroot/css/docs.css --minify" Condition="'$(Configuration)' == 'Release'" />
 	</Target>
 
 </Project>
