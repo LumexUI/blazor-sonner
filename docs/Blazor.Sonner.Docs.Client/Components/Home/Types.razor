@@ -25,7 +25,7 @@
         _types = new TypeDescriptor[]
         {
             new("Default", "default", () => Toast.Show( "Event has been created" )),
-            new("Description", "description", () => Toast.Show( "Event has been created", new() { Description = "Monday, January 3rd at 6:00pm" } )),
+            new("Description", "description", () => Toast.Show( "Event has been created", t => { t.Description = "Monday, January 3rd at 6:00pm"; } )),
             new("Success", "success", () => Toast.Success( "Event has been created" )),
             new("Info", "info", () => Toast.Info( "Be at the area 10 minutes before the event time" )),
             new("Warning", "warning", () => Toast.Warning( "Event start time cannot be earlier than 8am" )),

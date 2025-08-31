@@ -7,36 +7,36 @@ public class ToastService
 	internal event EventHandler<ToastModel>? OnShow;
 	internal event EventHandler? OnDismissAll;
 
-	public void Show( string title, ToastModel? data = null )
-		=> Show( ToastType.Default, title, data );
+	public void Show( string title, Action<ToastModel>? options = null )
+		=> Show( ToastType.Default, title, options );
 
-	public void Success( string title, ToastModel? data = null )
-		=> Show( ToastType.Success, title, data );
+	public void Success( string title, Action<ToastModel>? options = null )
+		=> Show( ToastType.Success, title, options );
 
-	public void Warning( string title, ToastModel? data = null )
-		=> Show( ToastType.Warning, title, data );
+	public void Warning( string title, Action<ToastModel>? options = null )
+		=> Show( ToastType.Warning, title, options );
 
-	public void Error( string title, ToastModel? data = null )
-		=> Show( ToastType.Error, title, data );
+	public void Error( string title, Action<ToastModel>? options = null )
+		=> Show( ToastType.Error, title, options );
 
-	public void Info( string title, ToastModel? data = null )
-		=> Show( ToastType.Info, title, data );
+	public void Info( string title, Action<ToastModel>? options = null )
+		=> Show( ToastType.Info, title, options );
 
 	public void DismissAll()
 	{
 		OnDismissAll?.Invoke( this, EventArgs.Empty );
 	}
 
-	private void Show( ToastType type, string title, ToastModel? data )
+	private void Show( ToastType type, string title, Action<ToastModel>? options )
 	{
 		var toast = new ToastModel
 		{
 			Id = Guid.NewGuid(),
 			Type = type,
 			Title = title,
-			Description = data?.Description,
 		};
 
+		options?.Invoke( toast );
 		OnShow?.Invoke( this, toast );
 	}
 }

@@ -65,9 +65,9 @@
         _activeSnippet = "closeButton";
         CloseButton = !CloseButton;
 
-        Toast.Show( "Event has been created", new ToastModel()
+        Toast.Show( "Event has been created", t =>
         {
-            Description = "Monday, January 3rd at 6:00pm"
+            t.Description = "Monday, January 3rd at 6:00pm";
         } );
 
         return CloseButtonChanged.InvokeAsync( CloseButton );

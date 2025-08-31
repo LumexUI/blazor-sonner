@@ -40,9 +40,9 @@
         await PositionChanged.InvokeAsync( position );
         Toast.DismissAll();
 
-        Toast.Show( "Event has been created", new()
+        Toast.Show( "Event has been created", t =>
         {
-            Description = "Monday, January 3rd at 6:00pm"
+            t.Description = "Monday, January 3rd at 6:00pm";
         } );
     }
 

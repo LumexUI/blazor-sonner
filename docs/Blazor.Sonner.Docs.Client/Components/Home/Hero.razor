@@ -25,9 +25,9 @@
 @code {
     private void ShowToast()
     {
-        Toast.Show( "Blazor Sonner", new()
+        Toast.Show( "Blazor Sonner", t =>
         {
-            Description = "An opinionated toast component for Blazor."
+            t.Description = "An opinionated toast component for Blazor.";
         } );
     }
 }

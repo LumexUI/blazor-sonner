@@ -1,19 +1,14 @@
 ﻿namespace Blazor.Sonner.Common;
 
-public sealed record ToastOptions
-{
-	public string? Description { get; set; }
-}
-
-public sealed record ToastModel
+public sealed class ToastModel
 {
 	public Guid Id { get; init; }
 	public string? ToasterId { get; set; }
-	public string? Title { get; set; }
 	public string? Description { get; set; }
-	public ToastType Type { get; set; }
 	public ToastPosition? Position { get; set; }
 
+	internal string? Title { get; set; }
+	internal ToastType Type { get; set; }
 	internal string TypeAsString => Type.ToString().ToLowerInvariant();
 }
 
