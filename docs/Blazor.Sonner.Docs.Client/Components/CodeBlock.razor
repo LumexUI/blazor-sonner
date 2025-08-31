@@ -31,8 +31,8 @@
     </button>
 
 
-    <div @ref="@_codeBlockRef" class="relative my-4 border border-border rounded-md overflow-hidden" data-code-block>
-        <div class="relative p-4 text-[13px] bg-surface" data-code>
+    <div @ref="@_codeBlockRef" class="relative my-4 px-4 border border-border rounded-md bg-surface overflow-x-auto" data-code-block>
+        <div class="relative py-4 text-[13px] overflow-x-auto" data-code>
             @_renderCodeSnippet
         </div>
     </div>
