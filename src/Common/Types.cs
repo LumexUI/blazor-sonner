@@ -2,14 +2,13 @@
 
 public sealed class ToastModel
 {
-	public Guid Id { get; init; }
+	public required Guid Id { get; set; }
 	public string? ToasterId { get; set; }
 	public string? Description { get; set; }
 	public ToastPosition? Position { get; set; }
 
 	internal string? Title { get; set; }
 	internal ToastType Type { get; set; }
-	internal string TypeAsString => Type.ToString().ToLowerInvariant();
 }
 
 public enum ToastType
