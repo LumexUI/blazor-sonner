@@ -30,6 +30,7 @@
             new("Info", "info", () => Toast.Info( "Be at the area 10 minutes before the event time" )),
             new("Warning", "warning", () => Toast.Warning( "Event start time cannot be earlier than 8am" )),
             new("Error", "error", () => Toast.Error( "Event has not been created" )),
+            new("Async", "async", () => Toast.Async( FetchDataAsync(), t => { t.Loading = "Loading..."; t.Success = (data) => $"{data} toast has been added"; t.Error = (ex) => ex.Message; } )),
         };
 
         _activeType = _types[0];
@@ -39,6 +40,20 @@
     {
         descriptor.Action();
         _activeType = descriptor;
+    }
+
+    private async Task<string> FetchDataAsync()
+    {
+        try
+        {
+            // Simulate an async operation
+            await Task.Delay( 2000 );
+            return "Blazor Sonner";
+        }
+        catch
+        {
+            throw;
+        }
     }
 
     private record TypeDescriptor( string Name, string Snippet, Action Action );

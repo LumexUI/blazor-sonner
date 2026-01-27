@@ -1,6 +1,6 @@
 ﻿namespace Blazor.Sonner.Common;
 
-public sealed class ToastModel
+public class ToastModel
 {
 	public required Guid Id { get; set; }
 	public string? ToasterId { get; set; }
@@ -9,6 +9,17 @@ public sealed class ToastModel
 
 	internal string? Title { get; set; }
 	internal ToastType Type { get; set; }
+    internal bool IsAsync { get; set; }
+}
+
+public class ToastAsyncModel<T> : ToastModel
+{
+    public string? Loading { get; set; }
+    public Func<T, string>? Success { get; set; }
+    public Func<Exception, string>? Error { get; set; }
+    public string? LoadingDescription { get; set; }
+    public Func<T, string>? SuccessDescription { get; set; }
+    public Func<Exception, string>? ErrorDescription { get; set; }
 }
 
 public enum ToastType
@@ -21,7 +32,9 @@ public enum ToastType
 
 	Error,
 
-	Info
+	Info,
+
+	Loading
 }
 
 public enum ToastPosition

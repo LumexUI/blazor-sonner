@@ -7,7 +7,7 @@
 --index: @Index;
 --toasts-before: @Index;
 --z-index: @(Toasts.Count - Index);
---offset: @($"{(_isRemoved ? _offsetBeforeRemove.ToString( CultureInfo.InvariantCulture ) : _offset.ToString( CultureInfo.InvariantCulture ))}px");
+--offset: @($"{( _isRemoved ? _offsetBeforeRemove.ToString( CultureInfo.InvariantCulture ) : _offset.ToString( CultureInfo.InvariantCulture ) )}px");
 --initial-height: @(Toaster.Expand ? "auto" : $"{_initialHeight.ToString( CultureInfo.InvariantCulture )}px");
 "
     tabindex="0"
@@ -18,23 +18,35 @@
     data-mounted="@_isMounted.ToAttr()"
     data-removed="@_isRemoved.ToAttr()"
     data-visible="@_isVisible.ToAttr()"
-    data-expanded="@((_isExpanded || (Toaster.Expand && _isMounted)).ToAttr())"
+    data-expanded="@(( _isExpanded || ( Toaster.Expand && _isMounted ) ).ToAttr())"
     data-front="@_isFront.ToAttr()"
+    data-promise="@Model.IsAsync.ToAttr()"
     data-swipe-out="false"
     data-y-position="@_position.Y"
     data-x-position="@_position.X">
-    @if( Toaster.CloseButton )
+    @if( Toaster.CloseButton && Model.Type is not ToastType.Loading )
     {
-        <button aria-label=""
-                data-disabled=""
-                data-close-button @onclick="@DismissAsync">
+        <button aria-label="Close toast"
+                data-disabled="@_isDisabled.ToAttr()"
+                data-close-button
+                @onclick="@DismissAsync">
             @Components.Assets.CloseIcon
         </button>
     }
 
     @if( Model.Type is not ToastType.Default )
     {
-        <div data-icon>@Icon</div>
+        <div data-icon>
+            @if( Model.IsAsync )
+            {
+                @Components.Assets.Loader( Model.Type is ToastType.Loading )
+            }
+
+            @if( Model.Type is not ToastType.Loading )
+            {
+                @Icon
+            }
+        </div>
     }
 
     <div data-content>
@@ -67,12 +79,14 @@
     };
 
     private ToastTimer? _timer;
+    private ToastType _previousType;
 
     private bool _isMounted;
     private bool _isRemoved;
     private bool _isVisible;
     private bool _isExpanded;
     private bool _isFront;
+    private bool _isDisabled;
 
     private int _heightIndex;
     private double _offset;
@@ -88,16 +102,34 @@
     {
         _timer = new ToastTimer( Toaster.Duration );
         _timer.OnCompleted += () => InvokeAsync( DismissAsync );
-        _timer.Start();
+
+        _previousType = Model.Type;
+
+        if( _previousType is not ToastType.Loading )
+        {
+            _timer.Start();
+        }
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
+        // Handle promise toast state transition: Loading → Success/Error
+        if( _previousType is ToastType.Loading && Model.Type is not ToastType.Loading )
+        {
+            // Promise resolved - start the auto-dismiss timer
+            _timer?.Start();
+
+            // Update height in case description has changed
+            await SetHeightAsync();
+        }
+
+        _previousType = Model.Type;
         _position = Utils.MapPosition( Position );
 
         _isFront = Index == 0;
         _isVisible = Index + 1 <= Toaster.VisibleToasts;
         _isExpanded = Toaster.Expanded;
+        _isDisabled = Model.Type is ToastType.Loading;
 
         _heightIndex = Math.Max( 0, Toaster.ToastHeights.FindIndex( h => h.ToastId == Model.Id ) );
         _previousToastsHeight = Toaster.ToastHeights.Take( _heightIndex ).Sum( h => h.Value );
@@ -112,6 +144,9 @@
             await SetMountedAsync( true );
             await SetHeightAsync();
         }
+
+        // Don't pause/resume timer for loading toasts (timer isn't running)
+        if( Model.Type is ToastType.Loading ) return;
 
         if( _isExpanded )
         {
@@ -133,6 +168,8 @@
 
     private async Task DismissAsync()
     {
+        if( _isDisabled ) return;
+
         _isRemoved = true;
         _offsetBeforeRemove = _offset;
 
@@ -143,7 +180,7 @@
 
     private async Task SetHeightAsync()
     {
-        var height = (await DomInterop.GetBoundingClientRectAsync( _toastRef )).Height;
+        var height = ( await DomInterop.GetBoundingClientRectAsync( _toastRef ) ).Height;
         _initialHeight = height;
 
         await OnHeightChanged.InvokeAsync( new Height( Model.Id, height ) );

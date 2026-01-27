@@ -1,0 +1,23 @@
+﻿<pre><code style="display: flex;" class="language-razor">@{
+  Toast.Async(DoAsync(), t =&gt;
+  {
+    t.Loading = &quot;Loading...&quot;;
+    t.Success = (data) =&gt; $&quot;{data} toast has been added&quot;;
+    t.Error = (ex) =&gt; ex.Message;
+  });
+
+  async Task&lt;string&gt; DoAsync()
+  {
+    try
+    {
+      // Simulate an async operation
+      await Task.Delay(2000);
+      return &quot;Blazor Sonner&quot;;
+    }
+    catch
+    {
+      throw;
+    }
+  }
+}
+</code></pre>

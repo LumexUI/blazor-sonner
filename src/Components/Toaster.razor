@@ -19,7 +19,7 @@
                 <ol @key="@position"
                     dir="@_dir.ToString().ToLowerInvariant()"
                     style="--gap: @($"{Gap}px"); --width: @($"{Constants.ToastWidth}px"); @Utils.GetOffset( Offset, MobileOffset )
-                                                           --front-toast-height: @FrontToastHeight;"
+                                   --front-toast-height: @FrontToastHeight;"
                     tabindex="-1"
                     data-sonner-toaster
                     data-sonner-theme="light"
@@ -32,7 +32,7 @@
                     {
                         var toast = FilteredToasts[index];
 
-                        if( (!toast.Position.HasValue && posIndex == 0) || toast.Position == position )
+                        if( ( !toast.Position.HasValue && posIndex == 0 ) || toast.Position == position )
                         {
                             <Toast @key="@toast.Id"
                                    Index="@index"
@@ -88,6 +88,7 @@
     protected override void OnInitialized()
     {
         ToastService.OnShow += ShowToast;
+        ToastService.OnUpdate += UpdateToast;
         ToastService.OnDismissAll += RemoveToasts;
     }
 
@@ -112,6 +113,16 @@
         StateHasChanged();
     }
 
+    private void UpdateToast( object? sender, ToastModel updated )
+    {
+        var index = _toasts.FindIndex( t => t.Id == updated.Id );
+        if( index == -1 ) return;
+
+        _toasts[index] = updated;
+
+        StateHasChanged();
+    }
+
     private void RemoveToasts( object? sender, EventArgs args )
     {
         _toasts.Clear();
@@ -130,12 +141,21 @@
 
     private void SaveToastHeight( Height height )
     {
-        ToastHeights.Insert( 0, height );
+        if( ToastHeights.Any( h => h.ToastId == height.ToastId ) )
+        {
+            var index = ToastHeights.FindIndex( h => h.ToastId == height.ToastId );
+            ToastHeights[index] = height;
+        }
+        else
+        {
+            ToastHeights.Insert( 0, height );
+        }
     }
 
     void IDisposable.Dispose()
     {
         ToastService.OnShow -= ShowToast;
+        ToastService.OnUpdate -= UpdateToast;
         ToastService.OnDismissAll -= RemoveToasts;
     }
 }
