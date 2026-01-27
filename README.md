@@ -51,6 +51,7 @@ Render the toaster in the root of your app.
 | Warning | Displays a warning toast with the specified title and optional data. |
 | Error | Displays an error toast with the specified title and optional data. |
 | Info | Displays an informational toast with the specified title and optional data. |
+| Async | Displays a toast linked to an asynchronous operation, updating automatically based on its state and result. |
 | RemoveAll | Removes all currently displayed toasts. |
 
 ### Toaster (Global settings)
