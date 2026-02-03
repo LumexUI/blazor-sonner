@@ -9,7 +9,7 @@
 	<PropertyGroup>
 		<Title>Blazor.Sonner</Title>
 		<Description>An opinionated toast component for Blazor. A port of Emil Kowalski's Sonner.</Description>
-		<Version>0.0.3</Version>
+		<Version>0.0.4</Version>
 		<Authors>LumexUI, desmondinho</Authors>
 		<PackageId>Blazor.Sonner</PackageId>
 		<PackageTags>blazor;toast;components;sonner</PackageTags>
