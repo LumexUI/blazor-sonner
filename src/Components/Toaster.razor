@@ -8,8 +8,7 @@
              aria-label="Notifications"
              aria-live="polite"
              aria-relevant="additions text"
-             aria-atomic="false"
-             @attributes="@AdditionalAttributes">
+             aria-atomic="false">
         @if( FilteredToasts?.Count > 0 )
         {
             for( var posIndex = 0; posIndex < PossiblePositions?.Count; posIndex++ )
@@ -28,7 +27,8 @@
                     data-x-position="@x"
                     @onmouseenter="@(() => Expanded = true)"
                     @onmousemove="@(() => Expanded = true)"
-                    @onmouseleave="@(() => Expanded = false)">
+                    @onmouseleave="@(() => Expanded = false)"
+                    @attributes="@AdditionalAttributes">
                     @for( var index = 0; index < FilteredToasts.Count; index++ )
                     {
                         var toast = FilteredToasts[index];
