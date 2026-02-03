@@ -8,7 +8,8 @@
              aria-label="Notifications"
              aria-live="polite"
              aria-relevant="additions text"
-             aria-atomic="false">
+             aria-atomic="false"
+             @attributes="@AdditionalAttributes">
         @if( FilteredToasts?.Count > 0 )
         {
             for( var posIndex = 0; posIndex < PossiblePositions?.Count; posIndex++ )
@@ -61,6 +62,8 @@
     [Parameter] public bool CloseButton { get; set; }
     [Parameter] public bool RichColors { get; set; }
     [Parameter] public DocumentDirection Dir { get; set; } = DocumentDirection.Auto;
+    [Parameter( CaptureUnmatchedValues = true )]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
     internal bool Expanded { get; private set; }
     internal List<Height> ToastHeights { get; } = [];
